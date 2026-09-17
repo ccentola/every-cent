@@ -1,0 +1,24 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# local data
+data/
+*.duckdb
+*.db
+
+# PyCharm / JetBrains
+.idea/
+*.iml
+*.iws
+out/
+
+# OS
+.DS_Store

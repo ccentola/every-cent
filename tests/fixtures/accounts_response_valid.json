@@ -1,0 +1,23 @@
+{
+  "errors": [],
+  "accounts": [
+    {
+      "org": { "domain": "examplebank.com", "name": "Example Bank" },
+      "id": "ACT-0001",
+      "name": "Everyday Checking",
+      "currency": "USD",
+      "balance": "1523.47",
+      "available-balance": "1523.47",
+      "balance-date": 1735689600,
+      "transactions": [
+        {
+          "id": "TXN-0001",
+          "posted": 1735603200,
+          "amount": "-12.50",
+          "description": "COFFEE SHOP #442",
+          "pending": false
+        }
+      ]
+    }
+  ]
+}

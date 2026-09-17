@@ -2,7 +2,10 @@
   "errors": [],
   "accounts": [
     {
-      "org": { "domain": "examplebank.com", "name": "Example Bank" },
+      "org": {
+        "domain": "examplebank.com",
+        "name": "Example Bank"
+      },
       "id": "ACT-0001",
       "name": "Everyday Checking",
       "currency": "USD",
@@ -16,8 +19,42 @@
           "amount": "-12.50",
           "description": "COFFEE SHOP #442",
           "pending": false
+        },
+        {
+          "id": "TXN-0002",
+          "posted": 1735516800,
+          "amount": "-45.00",
+          "description": "STREAMING SERVICE MONTHLY",
+          "pending": false
+        },
+        {
+          "id": "TXN-0003",
+          "posted": 1735430400,
+          "amount": "2500.00",
+          "description": "PAYROLL DEPOSIT",
+          "pending": false
+        },
+        {
+          "id": "TXN-0004",
+          "posted": 1735776000,
+          "amount": "-8.75",
+          "description": "PENDING COFFEE SHOP #442",
+          "pending": true
         }
       ]
+    },
+    {
+      "org": {
+        "domain": "examplebank.com",
+        "name": "Example Bank"
+      },
+      "id": "ACT-0002",
+      "name": "Savings",
+      "currency": "USD",
+      "balance": "10432.10",
+      "available-balance": "10432.10",
+      "balance-date": 1735689600,
+      "transactions": []
     }
   ]
 }

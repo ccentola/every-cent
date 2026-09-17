@@ -18,9 +18,10 @@ def test_parses_valid_response_into_expected_shape():
 
     parsed = AccountsResponse.model_validate(raw)
 
-    assert len(parsed.accounts) == 1
-    assert parsed.accounts[0].id == "ACT-0001"
-    assert len(parsed.accounts[0].transactions) == 1
+    assert len(parsed.accounts) == 2
+    checking = next(a for a in parsed.accounts if a.id == "ACT-0001")
+    assert checking.name == "Everyday Checking"
+    assert len(checking.transactions) == 4
 
 
 def test_amount_is_parsed_as_decimal_not_float():

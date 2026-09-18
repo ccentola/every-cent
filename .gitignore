@@ -9,8 +9,9 @@ wheels/
 # Virtual environments
 .venv
 
-# local data
-data/
+# local data (synthetic sample data is tracked, everything else isn't)
+data/*
+!data/sample/
 *.duckdb
 *.db
 

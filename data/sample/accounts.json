@@ -1,0 +1,92 @@
+{
+  "errors": [],
+  "accounts": [
+    {
+      "id": "ACT-SAMPLE-CHECKING",
+      "name": "Everyday Checking",
+      "currency": "USD",
+      "balance": "2456.13",
+      "transactions": [
+        {
+          "id": "TXN-SAMPLE-0001",
+          "posted": 1787184000,
+          "amount": "3200.00",
+          "description": "ACME CORP PAYROLL",
+          "pending": false
+        },
+        {
+          "id": "TXN-SAMPLE-0002",
+          "posted": 1788220800,
+          "amount": "-1450.00",
+          "description": "RIVERWALK APARTMENTS RENT",
+          "pending": false
+        },
+        {
+          "id": "TXN-SAMPLE-0003",
+          "posted": 1788566400,
+          "amount": "-12.99",
+          "description": "NETFLIX.COM",
+          "pending": false
+        },
+        {
+          "id": "TXN-SAMPLE-0004",
+          "posted": 1788998400,
+          "amount": "-84.27",
+          "description": "TRADER JOE'S #142",
+          "pending": false
+        },
+        {
+          "id": "TXN-SAMPLE-0005",
+          "posted": 1789430400,
+          "amount": "-9.99",
+          "description": "SPOTIFY USA",
+          "pending": false
+        },
+        {
+          "id": "TXN-SAMPLE-0006",
+          "posted": 1789689600,
+          "amount": "-6.50",
+          "description": "BLUE BOTTLE COFFEE",
+          "pending": true
+        }
+      ]
+    },
+    {
+      "id": "ACT-SAMPLE-SAVINGS",
+      "name": "High-Yield Savings",
+      "currency": "USD",
+      "balance": "11200.00",
+      "transactions": [
+        {
+          "id": "TXN-SAMPLE-0007",
+          "posted": 1787616000,
+          "amount": "500.00",
+          "description": "TRANSFER FROM CHECKING",
+          "pending": false
+        }
+      ]
+    },
+    {
+      "id": "ACT-SAMPLE-CREDITCARD",
+      "name": "Rewards Credit Card",
+      "currency": "USD",
+      "balance": "-342.18",
+      "transactions": [
+        {
+          "id": "TXN-SAMPLE-0008",
+          "posted": 1789603200,
+          "amount": "-58.40",
+          "description": "SHELL OIL #88291",
+          "pending": false
+        },
+        {
+          "id": "TXN-SAMPLE-0009",
+          "posted": 1789689600,
+          "amount": "-19.00",
+          "description": "AMC THEATRES",
+          "pending": true
+        }
+      ]
+    }
+  ]
+}

@@ -1,11 +1,15 @@
+import shutil
 from datetime import date, datetime, timezone
 from pathlib import Path
 from unittest.mock import Mock
 
 import pytest
 
+from ingest.encryption import decrypt_file
 from ingest.fetch_transactions import DEFAULT_OVERLAP_DAYS, build_arg_parser, fetch, land, main
 from ingest.schema import AccountsResponse
+
+requires_age = pytest.mark.skipif(shutil.which("age") is None, reason="age CLI not installed")
 
 FIXTURES = Path(__file__).parent / "fixtures"
 
@@ -94,6 +98,19 @@ def test_land_defaults_as_of_to_today(tmp_path):
     assert written.parent.name == date.today().isoformat()
 
 
+@requires_age
+def test_land_encrypts_output_when_recipient_given(tmp_path, make_age_keypair):
+    public_key, identity = make_age_keypair()
+    response = _sample_response()
+
+    written = land(response, raw_dir=tmp_path, as_of=date(2025, 6, 1), recipient=public_key)
+
+    assert written == tmp_path / "2025-06-01" / "accounts.json.age"
+    assert not (tmp_path / "2025-06-01" / "accounts.json").exists()
+    decrypted = decrypt_file(written, identity=identity, out_path=tmp_path / "decrypted.json")
+    assert AccountsResponse.model_validate_json(decrypted.read_text()) == response
+
+
 # --- CLI wiring -------------------------------------------------------------
 
 def test_build_arg_parser_defaults_days_to_overlap_window():
@@ -118,3 +135,26 @@ def test_main_lands_sample_data_end_to_end(tmp_path, capsys):
 
     assert result.exists()
     assert "2 accounts" in capsys.readouterr().out
+
+
+@requires_age
+def test_main_encrypts_landed_data_when_encrypt_for_given(tmp_path, capsys, make_age_keypair):
+    public_key, _ = make_age_keypair()
+    raw_dir = tmp_path / "raw"
+
+    result = main(
+        [
+            "--source",
+            "sample",
+            "--sample-path",
+            str(FIXTURES / "accounts_response_valid.json"),
+            "--raw-dir",
+            str(raw_dir),
+            "--encrypt-for",
+            public_key,
+        ]
+    )
+
+    assert result.suffix == ".age"
+    assert result.exists()
+    capsys.readouterr()

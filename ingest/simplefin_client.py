@@ -1,4 +1,5 @@
 import base64
+from datetime import timedelta
 from urllib.parse import urlparse, urlunparse
 
 import requests
@@ -48,3 +49,43 @@ class SimpleFinClient:
                 f"SimpleFIN API error: {response.status_code} {response.text}"
             )
         return AccountsResponse.model_validate(response.json())
+
+    def fetch_history(self, start_date, end_date):
+        """
+        Fetch accounts/transactions across an arbitrary date range,
+        chunking into <=90-day windows (SimpleFIN's query limit) and
+        merging the results. When a transaction appears in more than
+        one window (an overlapping daily re-pull), the version from
+        the later-fetched window wins, since it reflects the more
+        current state (e.g. pending -> settled).
+        """
+        window_size = timedelta(days=90)
+        accounts_by_id: dict[str, dict] = {}
+        all_errors: list[str] = []
+
+        window_start = start_date
+        while window_start < end_date:
+            window_end = min(window_start + window_size, end_date)
+            page = self.get_accounts(start_date=window_start, end_date=window_end)
+            all_errors.extend(page.errors)
+
+            for account in page.accounts:
+                if account.id not in accounts_by_id:
+                    accounts_by_id[account.id] = {
+                        "account": account,
+                        "transactions": {t.id: t for t in account.transactions},
+                    }
+                else:
+                    entry = accounts_by_id[account.id]
+                    entry["account"] = account  # keep the latest account-level fields
+                    entry["transactions"].update({t.id: t for t in account.transactions})
+
+            window_start = window_end
+
+        merged_accounts = [
+            entry["account"].model_copy(
+                update={"transactions": list(entry["transactions"].values())}
+            )
+            for entry in accounts_by_id.values()
+        ]
+        return AccountsResponse(errors=all_errors, accounts=merged_accounts)

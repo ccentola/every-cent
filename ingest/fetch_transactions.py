@@ -3,6 +3,7 @@ import os
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
+from ingest.encryption import encrypt_file
 from ingest.schema import AccountsResponse
 from ingest.simplefin_client import SimpleFinClient
 
@@ -20,12 +21,19 @@ def fetch(
     raise ValueError(f"unknown source: {source!r}")
 
 
-def land(response: AccountsResponse, raw_dir: Path, as_of: date | None = None) -> Path:
+def land(
+    response: AccountsResponse, raw_dir: Path, as_of: date | None = None, recipient: str | None = None
+) -> Path:
+    """Write a landed AccountsResponse to disk, encrypting it (per NFR1) if a recipient is given."""
     out_dir = Path(raw_dir) / (as_of or date.today()).isoformat()
     out_dir.mkdir(parents=True, exist_ok=True)
     out_path = out_dir / "accounts.json"
     out_path.write_text(response.model_dump_json())
-    return out_path
+    if recipient is None:
+        return out_path
+    encrypted_path = encrypt_file(out_path, recipient=recipient)
+    out_path.unlink()
+    return encrypted_path
 
 
 def build_arg_parser() -> argparse.ArgumentParser:
@@ -43,6 +51,11 @@ def build_arg_parser() -> argparse.ArgumentParser:
         default=DEFAULT_OVERLAP_DAYS,
         help="days of history to re-pull for the daily incremental overlap window",
     )
+    parser.add_argument(
+        "--encrypt-for",
+        default=os.environ.get("AGE_PUBLIC_KEY"),
+        help="age public key to encrypt landed data for; plaintext is kept if omitted",
+    )
     return parser
 
 
@@ -58,7 +71,7 @@ def main(argv=None) -> Path:
         start_date=start_date,
         end_date=end_date,
     )
-    path = land(response, args.raw_dir)
+    path = land(response, args.raw_dir, recipient=args.encrypt_for)
     print(f"Landed {len(response.accounts)} accounts to {path}")
     return path
 
